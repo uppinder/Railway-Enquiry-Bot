@@ -9,6 +9,7 @@ var API_LINKS = {
   tranbtwn : "http://api.railwayapi.com/between/source/",
   nametonum : "http://api.railwayapi.com/name_number/train/"
 }
+
 var options = {
   host: "172.16.116.76",
   port: 3128,
@@ -35,7 +36,7 @@ client.on('session:started', function () {
     console.log("Session started");
 });
 
-
+//Respond when users sends message to bot
 client.on('chat', function (msg) {
     
     console.log("Message received" + msg.from);
@@ -71,6 +72,7 @@ function generateReply(input , callback_end)
 
       var output = "";
 
+      //When an option is chosen
       if(input == "a" || input == "b" || input == "c" || input == "d") {
 
           prev_input = input;
@@ -340,7 +342,5 @@ function generateReply(input , callback_end)
       }
 
  }
- //console.log(" output end :" + output);     
- // callback_end(output);
-    
+
 }
