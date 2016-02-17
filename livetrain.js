@@ -11,7 +11,7 @@ var api_link_nametonum = "http://api.railwayapi.com/name_number/train/";
 
 api_link_nametonum = api_link_nametonum.concat(partial_name,suffix);
 url = api_link_nametonum;
-console.log(url);
+//console.log(url);
 
 var options = {
   host: "172.16.116.76",
@@ -33,35 +33,33 @@ function get_num(callu) {
         res.on('end', function() {
             var response = JSON.parse(body);
             
-            num = response.train.number;
+            console.log("get_num");
 
+
+            num = response.train.number;
+            api_link = api_link.concat(num,"/doj/",doj,suffix);
+            console.log(api_link);
+            options.path = api_link;
+            console.log(options.path);
+            //console.log("In get_num:"+num);
+            //train_number = num;
              if (response)
-                callu(num);
-            else
-                callu(false);
+                callu();
         });
     });
 }
-var train_number;
-get_num(function callu(num){
-      train_number = num; 
 
+var x = get_num(function callback() {
+
+    get_json(function call(resp) {
+      console.log(resp);
+    });
 });
-console.log(train_number);
 
-api_link = api_link.concat(train_number,"/doj/",doj,suffix);
-options["path"] = api_link;
-
-
-/*
-http.get(options, function(res) {
-  console.log(res);
-  res.pipe(process.stdout);
-});
-*/
 
 function findStation (response,station_code) {
 
+    //console.log(response);
     for(var i in response.route ) {
         
         var j = response.route[i]["station"];
@@ -70,18 +68,28 @@ function findStation (response,station_code) {
             return i;
         }
     }
-
+    //console.log(i);
     return false;
         
 }
 
 // ----receive function----v
-function get_json(url, callback) {
+function get_json(callback) {
+
+    //console.log(options.path);
+    //var start_time = new Date().getTime();
     http.get(options, function(res) {
         var body = '';
         res.on('data', function(chunk) {
             body += chunk;
         });
+    //var finish_time = new Date().getTime();
+    //var time = finish_time-start_time;
+    //console.log('Execution time = ' + time);
+
+
+        //console.log("In main func:"+train_number);
+        //console.log(api_link);
 
         res.on('end', function() {
             var response = JSON.parse(body);
@@ -101,11 +109,10 @@ function get_json(url, callback) {
     });
 }
 
-
          // -----------the url---v         ------------the callback---v
-var mydata = get_json(api_link, function (resp) {
-    console.log(resp);
-});
+//var mydata = get_json(function (resp) {
+ //   console.log(resp);
+//});
 
 
 
