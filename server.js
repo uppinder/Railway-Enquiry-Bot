@@ -37,14 +37,37 @@ client.on('session:started', function () {
 
 
 client.on('chat', function (msg) {
-    var input = msg.body;
-    var output = generateReply(input); 
+    
     console.log("Message received" + msg.from);
+    var input = msg.body;
+
+    var fuck = generateReply(input , function callr(output) {
+    
+    console.log("Final Output:" + output);
+    client.sendMessage({
+      to: msg.from,
+      type: 'chat',
+      requestReceipt: true,
+      id: client.nextId(),
+      body:  output,
+      json: 
+      {
+         subType: 'TEXT', // subtype can be 'TEXT', 'IMAGE', 'VIDEO', 'CONTACT', 'LOCATION', 'FILE'.
+         message: output,
+         timestamp: Date.now()
+      }
+    });
+
+   });
+    
 });
+
+
 
 client.connect();
 
-function generateReply(input) {
+function generateReply(input , callback_end)
+ {
 
       var output = "";
 
@@ -70,10 +93,14 @@ function generateReply(input) {
             
           }
 
+          callback_end(output);
+
       } else {
 
         switch(prev_input) {
             case "a":
+/*
+              console.log("User Input:" + input);
               var user_input = input.split(/\s+/);
               var api_link = API_LINKS.livetrain;
               var partial_name = user_input[0];
@@ -83,9 +110,15 @@ function generateReply(input) {
               api_link_nametonum = api_link_nametonum.concat(partial_name,suffix);
               var url = api_link_nametonum;
               options.path = api_link_nametonum;
+              console.log("api_link_nametonum:" + api_link_nametonum);
               
+              console.log("Variables Declared");
+
                 function get_num(callu) {
-                    http.get(options, function(res) {
+
+                  console.log("Enter get_num");
+
+                    http.get(options.path, function(res) {
                         var body = '';
                         res.on('data', function(chunk) {
                             body += chunk;
@@ -97,6 +130,8 @@ function generateReply(input) {
                             var num = response.train.number;
                             api_link = api_link.concat(num,"/doj/",doj,suffix);
                             options.path = api_link;
+                            console.log(options.path);
+
                             if (response)
                                 callu();
                         });
@@ -105,14 +140,21 @@ function generateReply(input) {
 
                 var x = get_num(function callback() {
 
+                    
+                    console.log("Receive data from get_num");
+
                     get_json(function call(resp) {
                       output = resp;
+                      console.log(output);
+                      callback_end(output);
                     });
                 });
 
 
                 function findStation (response,station_code) {
 
+                    console.log("findStation Response:" + response);
+                    console.log("Station Code:" + station_code);
                     for(var i in response.route ) {
                         
                         var j = response.route[i]["station"];
@@ -125,16 +167,19 @@ function generateReply(input) {
                         
                 }
 
-                // ----receive function----v
                 function get_json(callback) {
 
-                    http.get(options, function(res) {
+
+                    console.log("Calling get_json");
+
+                    http.get(options.path, function(res) {
                         var body = '';
                         res.on('data', function(chunk) {
                             body += chunk;
                         });
                         res.on('end', function() {
                             var response = JSON.parse(body);
+                            console.log("get_json Response:" + response);
 
                             var station_code = code;
 
@@ -149,7 +194,7 @@ function generateReply(input) {
                         });
                     });
                 }
-
+*/
 
               break;
             
@@ -160,7 +205,7 @@ function generateReply(input) {
               options.path   = API_LINKS.pnr + pnr_number + suffix;
 
               function getPnrStatus(callback) {
-                  http.get(options, function(res) {
+                  http.get(options.path, function(res) {
                   var body = '';
                   res.on('data', function(chunk) {
                     body += chunk;
@@ -179,11 +224,12 @@ function generateReply(input) {
 
               var mydata = getPnrStatus(function (resp) {
                   output = resp;
+                  callback_end(output);
               });
 
               break;
 
-            case "c":
+            /*case "c":
 
               var user_input    = input.split(/\s+/);
               var train_number  = user_input[0];
@@ -196,7 +242,7 @@ function generateReply(input) {
 
 
               function get_json(url, callback) {
-                  http.get(options, function(res) {
+                  http.get(options.path, function(res) {
                       var body = '';
                       res.on('data', function(chunk) {
                           body += chunk;
@@ -228,7 +274,7 @@ function generateReply(input) {
               options.path    = API_LINKS.tranbtwn.concat(source_code,"/dest/",dest_code,"/date/",date,suffix);
 
               function get_json(url, callback) {
-                  http.get(options, function(res) {
+                  http.get(options.path, function(res) {
                       var body = '';
                       res.on('data', function(chunk) {
                           body += chunk;
@@ -250,24 +296,12 @@ function generateReply(input) {
               });
 
               break;
-
+        */
          prev_input = "";
       }
 
-      
-  
-  client.sendMessage({
-      to: msg.from,
-      type: 'chat',
-      requestReceipt: true,
-      id: client.nextId(),
-      body:  output,
-      json: 
-      {
-         subType: 'TEXT', // subtype can be 'TEXT', 'IMAGE', 'VIDEO', 'CONTACT', 'LOCATION', 'FILE'.
-         message: output,
-         timestamp: Date.now()
-      }
-    });
+ }
+ //console.log(" output end :" + output);     
+ // callback_end(output);
     
 }
